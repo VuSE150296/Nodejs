@@ -43,9 +43,10 @@
                                     </td>
                                     <td>
                                         <div class="buttons are-small">
-                                            <button class="button is-warning is-light">Edit</button>
-                                            <button class="button is-danger is-light">Delete</button>
-
+                                            <a class="button is-warning is-light"
+                                                href="/players/edit/<%= player._id%>">Edit</a>
+                                            <a class="button is-danger is-light"
+                                                href="/players/delete/<%= player._id%>">Delete</a>
                                         </div>
                                     </td>
                                 </tr>
@@ -73,9 +74,11 @@
                         <div class="field">
                             <div class=" select is-fullwidth">
                                 <select name="club">
-                                    <option value="Barcelona">Barcelona</option>
-                                    <option value="Bayern Munich">Bayern Munich</option>
-                                    <option value="Real Madrid">Real Madrid</option>
+                                    <% for(let club of clubList){%>
+                                        <option value="<%= club.name%>">
+                                            <%= club.name%>
+                                        </option>
+                                        <%}%>
                                 </select>
                             </div>
                         </div>

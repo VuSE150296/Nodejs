@@ -1,0 +1,40 @@
+<div class="mb-3">
+    <label class="label">Name</label>
+    <input type="text" class="form-control" name="name" placeholder="Name" value="" required>
+    <p class="errMsg">
+        <%= message%>
+    </p>
+</div>
+<div class="mb-3">
+    <label class="label">Image</label>
+    <input class="form-control" type="text" name="image" placeholder="URL of image" value="" required>
+</div>
+<div class="mb-3">
+    <label class="label">Club</label>
+    <select name="club" class="form-select">
+        <% for(let club of clubList){ %>
+            <option value="<%=club.name%>">
+                <%= club.name%>
+            </option>
+            <% } %>
+    </select>
+</div>
+<div class="mb-3">
+    <label class="label">Position</label>
+    <input class="form-control" type="text" name="position" placeholder="Position" value="" required>
+</div>
+<div class="mb-3">
+    <label class="label">Goals</label>
+    <input class="form-control" type="number" name="goals" placeholder="Goals" value="" required>
+</div>
+<div class="mb-3">
+    <label class="label">Is Captain</label>
+    <select name="isCaptain" class="form-select">
+        <% for(let captain of isCaptainList){ %>
+            <option value="<%=captain.name%>">
+                <%= captain.name%>
+            </option>
+            <% } %>
+    </select>
+</div>
+<button type="submit" class="btn btn-success">Create</button>
