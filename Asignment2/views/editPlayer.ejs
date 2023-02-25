@@ -41,6 +41,18 @@
                                     value="<%= player.image%>" required>
                             </div>
                             <div class="mb-3">
+                                <label class="label">Nation</label>
+                                <select name="nation" class="form-select">
+                                    <% for(let nation of nations){ %>
+                                        <option value="<%=nation.name%>"
+                                            <%=JSON.stringify(nation.name)===JSON.stringify(player.nation)? 'selected'
+                                            : '' %>>
+                                            <%= nation.name%>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label class="label">Club</label>
                                 <select name="club" class="form-select">
                                     <% for(let club of clubList){%>
@@ -54,8 +66,15 @@
                             </div>
                             <div class="mb-3">
                                 <label class="label">Position</label>
-                                <input class="form-control" type="text" name="position" placeholder="Position"
-                                    value="<%= player.position%>" required>
+                                <select name="position" class="form-select">
+                                    <% for(let position of positions){%>
+                                        <option value="<%=position.name%>"
+                                            <%=JSON.stringify(position.name)===JSON.stringify(player.position)? 'selected'
+                                            : '' %>>
+                                            <%=position.name%>
+                                        </option>
+                                        <% } %>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label class="label">Goals</label>

@@ -1,4 +1,5 @@
 const Player = require("../models/player");
+const Nation = require("../models/nation");
 
 let clubData = [
   { id: "1", name: "Arsenal" },
@@ -16,6 +17,24 @@ let isCaptain = [
   { id: "2", name: "Not Captain" },
 ];
 
+let positionList = [
+  { id: "1", name: "GK" },
+  { id: "2", name: "RB" },
+  { id: "3", name: "CB" },
+  { id: "4", name: "LB" },
+  { id: "5", name: "CDM" },
+  { id: "6", name: "CM" },
+  { id: "7", name: "CAM" },
+  { id: "8", name: "RW" },
+  { id: "9", name: "LW" },
+  { id: "10", name: "ST" },
+];
+
+let nations;
+Nation.find().then((nation) => {
+  nations = nation;
+});
+
 const errMessage = "Name already exist!";
 
 class playerController {
@@ -28,6 +47,8 @@ class playerController {
           clubList: clubData,
           isCaptainList: isCaptain,
           message: "",
+          nations: nations,
+          positions: positionList,
         });
       })
       .catch(next);
@@ -49,6 +70,8 @@ class playerController {
             clubList: clubData,
             isCaptainList: isCaptain,
             message: errMessage,
+            nations: nations,
+            positions: positionList,
           });
         });
       });
@@ -64,6 +87,8 @@ class playerController {
           clubList: clubData,
           isCaptainList: isCaptain,
           message: "",
+          nations: nations,
+          positions: positionList,
         });
       })
       .catch(next);
@@ -82,6 +107,8 @@ class playerController {
             clubList: clubData,
             isCaptainList: isCaptain,
             message: errMessage,
+            nations: nations,
+            positions: positionList,
           });
         })
       );

@@ -12,6 +12,10 @@ const playerSchema = new Schema(
       type: String,
       require: true,
     },
+    nation: {
+      type: String,
+      require: true,
+    },
     club: {
       type: String,
       require: true,
