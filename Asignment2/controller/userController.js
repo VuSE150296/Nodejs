@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const checkIsAdmin = require("../config/checkIsAdmin");
 
 var today = new Date();
 var currentYear = today.getFullYear();
@@ -11,7 +12,7 @@ class userController {
       title: "Register Page",
     });
   }
-  register(req, res, next) {
+  async register(req, res, next) {
     console.log(req.body);
     const { name, yob, username, password } = req.body;
     let age = currentYear - yob;
@@ -37,7 +38,7 @@ class userController {
         password: password,
       });
     } else {
-      User.findOne({ username: username }).then((user) => {
+      await User.findOne({ username: username }).then((user) => {
         if (user) {
           errors.push({ msg: "Username already exists" });
           res.render("register", {
@@ -50,7 +51,6 @@ class userController {
           });
         } else {
           const newUser = new User({
-            title: "Register Page",
             name: name,
             yob: yob,
             username: username,
@@ -90,6 +90,48 @@ class userController {
       req.flash("success_msg", "You are logged out!");
       res.redirect("/auth");
     });
+  }
+  account(req, res, next) {
+    var userID = req.user._id;
+    var showListUser = false;
+    if (checkIsAdmin(req.user.isAdmin)) {
+      showListUser = true;
+    }
+    User.findById(userID).then((user) => {
+      res.render("account", {
+        title: "Account Page",
+        user: user,
+        showListUser: showListUser,
+      });
+    });
+  }
+  editAccount(req, res, next) {
+    var userID = req.params.accountID;
+    User.findById(userID).then((user) => {
+      res.render("editAccount", {
+        title: "Edit Account",
+        user: user,
+      });
+    });
+  }
+  updateAccount(req, res, next) {
+    var userID = req.params.accountID;
+    User.updateOne({ _id: userID }, req.body).then(() => {
+      res.redirect("/auth/account");
+    });
+  }
+  listUser(req, res, next) {
+    if (checkIsAdmin(req.user.isAdmin)) {
+      User.find({}).then((user) => {
+        res.render("listUser", {
+          title: "List User",
+          user: user,
+        });
+      });
+    } else {
+      req.flash("error_msg", "Only Admin can do this action!");
+      res.redirect("/auth/account");
+    }
   }
 }
 

@@ -14,6 +14,7 @@ const playerSchema = new Schema(
     },
     nation: {
       type: String,
+      ref: "Nations",
       require: true,
     },
     club: {
@@ -27,6 +28,7 @@ const playerSchema = new Schema(
     goals: {
       type: Number,
       require: true,
+      default: 0,
     },
     isCaptain: {
       type: String,

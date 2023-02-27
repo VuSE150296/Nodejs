@@ -1,5 +1,6 @@
 const Player = require("../models/player");
 const Nation = require("../models/nation");
+var checkIsAdmin = require("../config/checkIsAdmin");
 
 let clubData = [
   { id: "1", name: "Arsenal" },
@@ -35,7 +36,8 @@ Nation.find().then((nation) => {
   nations = nation;
 });
 
-const errMessage = "Name already exist!";
+const errMessage = "Player name already exist!";
+const authMessage = "Only Admin can do this action!";
 
 class playerController {
   index(req, res, next) {
@@ -57,70 +59,92 @@ class playerController {
   create(req, res, next) {
     const player = new Player(req.body);
     const playerName = req.body.name;
-    player
-      .save()
-      .then(() => {
-        res.redirect("/players");
-      })
-      .catch(() => {
-        Player.find({ name: playerName }).then((player) => {
-          res.render("player", {
-            title: "The detail of Player",
-            player: player,
-            clubList: clubData,
-            isCaptainList: isCaptain,
-            message: errMessage,
-            nations: nations,
-            positions: positionList,
+    console.log(player);
+    if (checkIsAdmin(req.user.isAdmin)) {
+      player
+        .save()
+        .then(() => {
+          res.redirect("/players");
+        })
+        .catch(() => {
+          Player.find({ name: playerName }).then((player) => {
+            res.render("player", {
+              title: "The detail of Player",
+              player: player,
+              clubList: clubData,
+              isCaptainList: isCaptain,
+              message: errMessage,
+              nations: nations,
+              positions: positionList,
+            });
           });
         });
-      });
+    } else {
+      req.flash("error_msg", authMessage);
+      res.redirect("/players");
+    }
+    res.redirect("/players");
   }
 
   edit(req, res, next) {
-    const playerID = req.params.playerID;
-    Player.findById(playerID)
-      .then((player) => {
-        res.render("editPlayer", {
-          title: "The detail of Player",
-          player: player,
-          clubList: clubData,
-          isCaptainList: isCaptain,
-          message: "",
-          nations: nations,
-          positions: positionList,
-        });
-      })
-      .catch(next);
-  }
-  update(req, res, next) {
-    const playerID = req.params.playerID;
-    Player.updateOne({ _id: playerID }, req.body)
-      .then(() => {
-        res.redirect("/players");
-      })
-      .catch(() =>
-        Player.findById(playerID).then((player) => {
+    if (checkIsAdmin(req.user.isAdmin)) {
+      const playerID = req.params.playerID;
+      Player.findById(playerID)
+        .then((player) => {
           res.render("editPlayer", {
             title: "The detail of Player",
             player: player,
             clubList: clubData,
             isCaptainList: isCaptain,
-            message: errMessage,
+            message: "",
             nations: nations,
             positions: positionList,
           });
         })
-      );
+        .catch(next);
+    } else {
+      req.flash("error_msg", authMessage);
+      res.redirect("/players");
+    }
+  }
+  update(req, res, next) {
+    if (checkIsAdmin(req.user.isAdmin)) {
+      const playerID = req.params.playerID;
+      Player.updateOne({ _id: playerID }, req.body)
+        .then(() => {
+          res.redirect("/players");
+        })
+        .catch(() =>
+          Player.findById(playerID).then((player) => {
+            res.render("editPlayer", {
+              title: "The detail of Player",
+              player: player,
+              clubList: clubData,
+              isCaptainList: isCaptain,
+              message: errMessage,
+              nations: nations,
+              positions: positionList,
+            });
+          })
+        );
+    } else {
+      req.flash("error_msg", authMessage);
+      res.redirect("/players");
+    }
   }
 
   delete(req, res, next) {
-    const playerID = req.params.playerID;
-    Player.findByIdAndDelete({ _id: playerID })
-      .then(() => {
-        res.redirect("/players");
-      })
-      .catch(next);
+    if (checkIsAdmin(req.user.isAdmin)) {
+      const playerID = req.params.playerID;
+      Player.findByIdAndDelete({ _id: playerID })
+        .then(() => {
+          res.redirect("/players");
+        })
+        .catch(next);
+    } else {
+      req.flash("error_msg", authMessage);
+      res.redirect("/players");
+    }
   }
 
   details(req, res, next) {

@@ -14,8 +14,9 @@ var playerRouter = require("./routes/playerRouter");
 var errorRouter = require("./routes/error");
 const { default: mongoose } = require("mongoose");
 const nationRouter = require("./routes/nationRouter");
+var config = require("./config/config");
 
-const url = "mongodb://localhost:27017/worldcup2022";
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 var app = express();
@@ -24,8 +25,8 @@ require("./config/passport")(passport);
 app.use(
   session({
     secret: "secret",
-    resave: true,
-    saveUninitialized: true,
+    resave: true, //Mỗi req => tạo ra 1 session mới => không quan tâm ai hay browser nào hết
+    saveUninitialized: true, //Nếu không đụng hoặc chỉnh sửa thì mình không muốn session thay đổi
   })
 );
 app.use(passport.initialize());
@@ -48,16 +49,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(cookieParser("12345-67890"));
-app.use(
-  session({
-    name: "session-id",
-    secret: "12345-67890-09876-54321",
-    saveUninitialized: false,
-    resave: false,
-    store: new FileStore(),
-  })
-);
+// app.use(cookieParser("12345-67890"));
+// app.use(
+//   session({
+//     name: "session-id",
+//     secret: "12345-67890-09876-54321",
+//     saveUninitialized: false,
+//     resave: false,
+//     store: new FileStore(),
+//   })
+// );
 
 // function auth(req, res, next) {
 //   if (!req.signedCookies.user) {

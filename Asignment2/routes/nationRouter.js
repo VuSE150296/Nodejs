@@ -1,17 +1,20 @@
 const express = require("express");
 const nationRouter = express.Router();
 const nationController = require("../controller/nationController");
+const { ensureAuthenticated } = require("../config/auth");
 
 nationRouter
   .route("/")
   .get(nationController.index)
-  .post(nationController.create);
+  .post(ensureAuthenticated, nationController.create);
 
 nationRouter
   .route("/edit/:nationID")
-  .get(nationController.edit)
-  .post(nationController.update);
+  .get(ensureAuthenticated, nationController.edit)
+  .post(ensureAuthenticated, nationController.update);
 
-nationRouter.route("/delete/:nationID").get(nationController.delete);
+nationRouter
+  .route("/delete/:nationID")
+  .get(ensureAuthenticated, nationController.delete);
 
 module.exports = nationRouter;

@@ -1,18 +1,21 @@
 const express = require("express");
 const playerRouter = express.Router();
 const playerController = require("../controller/playerController");
+const { ensureAuthenticated } = require("../config/auth");
 
 playerRouter
   .route("/")
   .get(playerController.index)
-  .post(playerController.create);
+  .post(ensureAuthenticated, playerController.create);
 
 playerRouter
   .route("/edit/:playerID")
-  .get(playerController.edit)
-  .post(playerController.update);
+  .get(ensureAuthenticated, playerController.edit)
+  .post(ensureAuthenticated, playerController.update);
 
-playerRouter.route("/delete/:playerID").get(playerController.delete);
+playerRouter
+  .route("/delete/:playerID")
+  .get(ensureAuthenticated, playerController.delete);
 
 playerRouter.route("/details/:playerID").get(playerController.details);
 
