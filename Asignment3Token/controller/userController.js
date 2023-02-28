@@ -127,7 +127,8 @@ class userController {
     });
   }
   editAccount(req, res, next) {
-    var userID = req.params.accountID;
+    var data = jwt.verify(req.cookies.accessToken, config.secretKey);
+    var userID = data.user._id;
     User.findById(userID).then((user) => {
       res.render("editAccount", {
         title: "Edit Account",
@@ -136,10 +137,37 @@ class userController {
     });
   }
   updateAccount(req, res, next) {
-    var userID = req.params.accountID;
-    User.updateOne({ _id: userID }, req.body).then(() => {
-      res.redirect("/auth/account");
-    });
+    var data = jwt.verify(req.cookies.accessToken, config.secretKey);
+    var userID = data.user._id;
+    let age = currentYear - req.body.yob;
+    console.log(age);
+    let errors = "";
+    if (age < 18 || age > 100) {
+      errors = "You must be over 18 years old and less than 100 years old!";
+    }
+    if (errors.length != "") {
+      User.findById(userID).then((user) => {
+        res.render("editAccount", {
+          title: "Edit Account",
+          user: user,
+          error_msg: errors,
+        });
+      });
+    } else {
+      User.updateOne({ _id: userID }, req.body)
+        .then(() => {
+          res.redirect("/auth/account");
+        })
+        .catch((err) => {
+          req.flash("error_msg", err);
+          User.findById(userID).then((user) => {
+            res.render("editAccount", {
+              title: "Edit Account",
+              user: user,
+            });
+          });
+        });
+    }
   }
   listUser(req, res, next) {
     var data = jwt.verify(req.cookies.accessToken, config.secretKey);

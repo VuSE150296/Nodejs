@@ -49,7 +49,7 @@ userRouter
 userRouter.route("/account").get(cookieAuthenticated, userController.account);
 
 userRouter
-  .route("/account/edit/:accountID")
+  .route("/account/edit")
   .get(cookieAuthenticated, userController.editAccount)
   .post(cookieAuthenticated, userController.updateAccount);
 

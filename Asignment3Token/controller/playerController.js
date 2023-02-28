@@ -33,10 +33,10 @@ let positionList = [
   { id: "10", name: "ST" },
 ];
 
-let nations;
+let nations = [];
 function getNation() {
   Nation.find().then((nation) => {
-    return (nations = nation);
+    return nations.push(nation);
   });
 }
 
@@ -45,7 +45,10 @@ const authMessage = "Only Admin can do this action!";
 
 class playerController {
   index(req, res, next) {
-    getNation();
+    let nations;
+    Nation.find().then((nation) => {
+      return (nations = nation);
+    });
     var token = req.cookies.accessToken;
     if (token) {
       var data = jwt.verify(req.cookies.accessToken, config.secretKey);
@@ -83,34 +86,32 @@ class playerController {
   }
 
   create(req, res, next) {
-    const player = new Player(req.body);
-    const playerName = req.body.name;
+    const newPlayer = new Player(req.body);
     var data = jwt.verify(req.cookies.accessToken, config.secretKey);
     if (data.user.isAdmin) {
       getNation();
-      player
+      newPlayer
         .save()
         .then(() => {
           res.redirect("/players");
         })
         .catch(() => {
-          Player.find({ name: playerName }).then((player) => {
-            res.render("player", {
-              title: "The detail of Player",
-              player: player,
-              clubList: clubData,
-              isCaptainList: isCaptain,
-              message: errMessage,
-              nations: nations,
-              positions: positionList,
-            });
-          });
+          Player.find({})
+            .then((player) => {
+              res.render("player", {
+                title: "The list of Players",
+                player: player,
+                clubList: clubData,
+                isCaptainList: isCaptain,
+                error: "Name already exist!",
+                checkAdmin: true,
+                nations: nations,
+                positions: positionList,
+              });
+            })
+            .catch(next);
         });
-    } else {
-      req.flash("error_msg", authMessage);
-      res.redirect("/players");
     }
-    res.redirect("/players");
   }
 
   edit(req, res, next) {
