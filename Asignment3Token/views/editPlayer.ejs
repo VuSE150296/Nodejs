@@ -44,8 +44,8 @@
                                 <label class="label">Nation</label>
                                 <select name="nation" class="form-select">
                                     <% for(let nation of nations){ %>
-                                        <option value="<%=nation.name%>"
-                                            <%=JSON.stringify(nation.name)===JSON.stringify(player.nation)? 'selected'
+                                        <option value="<%=nation.image%>"
+                                            <%=JSON.stringify(nation.image)===JSON.stringify(player.nation)? 'selected'
                                             : '' %>>
                                             <%= nation.name%>
                                         </option>
@@ -88,7 +88,7 @@
                                         <option value="<%=captain.name%>"
                                             <%=JSON.stringify(captain.name)===JSON.stringify(player.isCaptain)? 'selected'
                                             : '' %>>
-                                            <%= captain.name%>
+                                            <%=JSON.stringify(captain.name)===JSON.stringify('Captain')? 'Yes' :'No'%>
                                         </option>
                                         <% } %>
                                 </select>

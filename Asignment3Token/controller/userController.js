@@ -1,8 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const { json } = require("body-parser");
 const config = require("../config/config");
 
 var today = new Date();
@@ -89,9 +87,7 @@ class userController {
           bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) throw err;
             if (isMatch) {
-              token = jwt.sign({ user }, config.secretKey, {
-                expiresIn: "30m",
-              });
+              token = jwt.sign({ user }, config.secretKey);
               res.cookie("accessToken", token);
               res.redirect("/");
             } else {

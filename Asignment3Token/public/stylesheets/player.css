@@ -137,3 +137,9 @@ table thead{
     display: flex;
     justify-content: space-between;
 }
+
+.player-nation{
+    max-width: 50px;
+    max-height: 50px;
+    border-radius: 10px;
+}

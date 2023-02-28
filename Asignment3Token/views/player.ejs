@@ -47,7 +47,7 @@
                                                     <%= player.name %>
                                                 </td>
                                                 <td>
-                                                    <%= player.nation %>
+                                                    <img src="<%= player.nation %>" alt="" class="player-nation">
                                                 </td>
                                                 <td>
                                                     <%= player.club %>
@@ -71,15 +71,17 @@
                                                                     <a class="btn detail-btn"
                                                                         href="/players/details/<%= player._id%>">Details</a>
                                                                 </li>
-                                                                <li>
-                                                                    <a class="btn edit-btn"
-                                                                        href="/players/edit/<%= player._id%>">Edit</a>
-                                                                </li>
-                                                                <li>
-                                                                    <a class="btn delete-btn"
-                                                                        onclick="deleteFunction('<%=player._id%>')">Delete
-                                                                    </a>
-                                                                </li>
+                                                                <% if(checkAdmin){%>
+                                                                    <li>
+                                                                        <a class="btn edit-btn"
+                                                                            href="/players/edit/<%= player._id%>">Edit</a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="btn delete-btn"
+                                                                            onclick="deleteFunction('<%=player._id%>')">Delete
+                                                                        </a>
+                                                                    </li>
+                                                                    <% } %>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -90,67 +92,70 @@
                                 </table>
                             </div>
                             <div class="col-lg-5">
-                                <form method="post" class="box">
-                                    <div class="mb-3">
-                                        <label class="label">Name</label>
-                                        <input type="text" class="form-control" name="name" placeholder="Name" value=""
-                                            required>
-                                        <p class="errMsg">
-                                            <%= message%>
-                                        </p>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Image</label>
-                                        <input class="form-control" type="text" name="image" placeholder="URL of image"
-                                            value="" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Nation</label>
-                                        <select name="nation" class="form-select">
-                                            <% for(let nation of nations){ %>
-                                                <option value="<%=nation.name%>">
-                                                    <%= nation.name%>
-                                                </option>
-                                                <% } %>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Club</label>
-                                        <select name="club" class="form-select">
-                                            <% for(let club of clubList){ %>
-                                                <option value="<%=club.name%>">
-                                                    <%= club.name%>
-                                                </option>
-                                                <% } %>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Position</label>
-                                        <select name="position" class="form-select">
-                                            <% for(let position of positions){ %>
-                                                <option value="<%=position.name%>">
-                                                    <%= position.name%>
-                                                </option>
-                                                <% } %>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Goals</label>
-                                        <input class="form-control" type="number" name="goals" placeholder="Goals"
-                                            value="" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Is Captain</label>
-                                        <select name="isCaptain" class="form-select">
-                                            <% for(let captain of isCaptainList){ %>
-                                                <option value="<%=captain.name%>">
-                                                    <%= captain.name%>
-                                                </option>
-                                                <% } %>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-success">Create</button>
-                                </form>
+                                <% if(checkAdmin){%>
+                                    <form method="post" class="box">
+                                        <div class="mb-3">
+                                            <label class="label">Name</label>
+                                            <input type="text" class="form-control" name="name" placeholder="Name"
+                                                value="" required>
+                                            <p class="errMsg">
+                                                <%= message%>
+                                            </p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Image</label>
+                                            <input class="form-control" type="text" name="image"
+                                                placeholder="URL of image" value="" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Nation</label>
+                                            <select name="nation" class="form-select">
+                                                <% for(let nation of nations){ %>
+                                                    <option value="<%=nation.image%>">
+                                                        <%= nation.name%>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Club</label>
+                                            <select name="club" class="form-select">
+                                                <% for(let club of clubList){ %>
+                                                    <option value="<%=club.name%>">
+                                                        <%= club.name%>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Position</label>
+                                            <select name="position" class="form-select">
+                                                <% for(let position of positions){ %>
+                                                    <option value="<%=position.name%>">
+                                                        <%= position.name%>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Goals</label>
+                                            <input class="form-control" type="number" name="goals" placeholder="Goals"
+                                                value="" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Is Captain</label>
+                                            <select name="isCaptain" class="form-select">
+                                                <% for(let captain of isCaptainList){ %>
+                                                    <option value="<%=captain.name%>">
+                                                        <%=JSON.stringify(captain.name)===JSON.stringify('Captain')? 'Yes'
+                                                            :'No'%>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Create</button>
+                                    </form>
+                                    <% } %>
                             </div>
                 </div>
             </div>

@@ -3,16 +3,25 @@ const Nation = require("../models/nation");
 var jwt = require("jsonwebtoken");
 const config = require("../config/config");
 
+let checkAdmin = false;
 const errMessage = "Nation already exist!";
 const authMessage = "Only Admin can do this action!";
 
 class nationController {
   index(req, res, next) {
+    var token = req.cookies.accessToken;
+    if (token) {
+      var data = jwt.verify(req.cookies.accessToken, config.secretKey);
+      if (data.user.isAdmin) {
+        checkAdmin = true;
+      }
+    }
     Nation.find({})
       .then((nation) => {
         res.render("nation", {
           title: "The list of Nations",
           nation: nation,
+          checkAdmin: checkAdmin,
           message: "",
           authMessage: "",
         });
@@ -22,7 +31,8 @@ class nationController {
   create(req, res, next) {
     const nation = new Nation(req.body);
     const nationName = req.body.name;
-    if (checkIsAdmin(req.user.isAdmin)) {
+    var data = jwt.verify(req.cookies.accessToken, config.secretKey);
+    if (data.user.isAdmin) {
       nation
         .save()
         .then(() => {

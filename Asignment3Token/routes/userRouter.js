@@ -6,6 +6,8 @@ const { notAuthenticated } = require("../config/notAuth");
 var { ensureAuthenticated } = require("../config/auth");
 var { cookieNotAuthenticated } = require("../config/notAuthenticated");
 var { cookieAuthenticated } = require("../config/authenticated");
+const jwt = require("jsonwebtoken");
+const config = require("../config/config");
 
 userRouter
   .route("/")
@@ -27,7 +29,17 @@ userRouter
 //     });
 //   });
 
-userRouter.route("/logout").get(cookieAuthenticated, userController.signOut);
+userRouter.route("/logout").get((req, res, next) => {
+  if (req.cookies.accessToken) {
+    var accessToken = req.cookies.accessToken;
+    var checkTokenValid = jwt.verify(accessToken, config.secretKey);
+    if (checkTokenValid) {
+      return next();
+    }
+  }
+  req.flash("error_msg", "Please login first!");
+  res.redirect("/");
+}, userController.signOut);
 
 userRouter
   .route("/register")

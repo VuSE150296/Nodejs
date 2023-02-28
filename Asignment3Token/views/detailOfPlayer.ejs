@@ -66,7 +66,8 @@
                                 Goals: <%= player.goals%>
                             </p>
                             <p class="text">
-                                Is Captain: <%= player.isCaptain%>
+                                Is Captain: <%=JSON.stringify(player.isCaptain)===JSON.stringify('Captain')? 'Yes'
+                                    :'No'%>
                             </p>
                         </div>
                     </div>

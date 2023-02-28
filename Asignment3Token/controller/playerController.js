@@ -34,15 +34,38 @@ let positionList = [
 ];
 
 let nations;
-Nation.find().then((nation) => {
-  nations = nation;
-});
+function getNation() {
+  Nation.find().then((nation) => {
+    return (nations = nation);
+  });
+}
 
 const errMessage = "Player name already exist!";
 const authMessage = "Only Admin can do this action!";
 
 class playerController {
   index(req, res, next) {
+    getNation();
+    var token = req.cookies.accessToken;
+    if (token) {
+      var data = jwt.verify(req.cookies.accessToken, config.secretKey);
+      if (data.user.isAdmin) {
+        Player.find({})
+          .then((player) => {
+            res.render("player", {
+              title: "The list of Players",
+              player: player,
+              clubList: clubData,
+              isCaptainList: isCaptain,
+              message: "",
+              checkAdmin: true,
+              nations: nations,
+              positions: positionList,
+            });
+          })
+          .catch(next);
+      }
+    }
     Player.find({})
       .then((player) => {
         res.render("player", {
@@ -51,6 +74,7 @@ class playerController {
           clubList: clubData,
           isCaptainList: isCaptain,
           message: "",
+          checkAdmin: false,
           nations: nations,
           positions: positionList,
         });
@@ -63,6 +87,7 @@ class playerController {
     const playerName = req.body.name;
     var data = jwt.verify(req.cookies.accessToken, config.secretKey);
     if (data.user.isAdmin) {
+      getNation();
       player
         .save()
         .then(() => {
@@ -91,6 +116,7 @@ class playerController {
   edit(req, res, next) {
     var data = jwt.verify(req.cookies.accessToken, config.secretKey);
     if (data.user.isAdmin) {
+      getNation();
       const playerID = req.params.playerID;
       Player.findById(playerID)
         .then((player) => {
@@ -113,6 +139,7 @@ class playerController {
   update(req, res, next) {
     var data = jwt.verify(req.cookies.accessToken, config.secretKey);
     if (data.user.isAdmin) {
+      getNation();
       const playerID = req.params.playerID;
       Player.updateOne({ _id: playerID }, req.body)
         .then(() => {

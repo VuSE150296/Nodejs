@@ -35,7 +35,9 @@
                                                 <th scope="col">Image</th>
                                                 <th scope="col">Name</th>
                                                 <th scope="col">Description</th>
-                                                <th scope="col">Actions</th>
+                                                <% if(checkAdmin){%>
+                                                    <th scope="col">Actions</th>
+                                                    <%}%>
                                             </tr>
                                         </thead>
                                         <% nation.forEach(function(nation){%>
@@ -49,33 +51,37 @@
                                                     <td>
                                                         <%= nation.description %>
                                                     </td>
-                                                    <td>
-                                                        <div class="buttons">
-                                                            <div class="dropdown">
-                                                                <button class="btn btn-success" type="button"
-                                                                    id="dropdownMenuButton1" data-bs-toggle="dropdown"
-                                                                    aria-expanded="false">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                        height="16" fill="currentColor"
-                                                                        class="bi bi-three-dots" viewBox="0 0 16 16">
-                                                                        <path
-                                                                            d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-                                                                    </svg>
-                                                                </button>
-                                                                <ul class="dropdown-menu"
-                                                                    aria-labelledby="dropdownMenuButton1">
-                                                                    <li>
-                                                                        <a class="btn edit-btn"
-                                                                            href="/nations/edit/<%= nation._id%>">Edit</a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a class="btn delete-btn"
-                                                                            onclick="deleteFunction('<%=nation._id%>')">Delete</a>
-                                                                    </li>
-                                                                </ul>
+                                                    <% if(checkAdmin){%>
+                                                        <td>
+                                                            <div class="buttons">
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-success" type="button"
+                                                                        id="dropdownMenuButton1"
+                                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="16" height="16" fill="currentColor"
+                                                                            class="bi bi-three-dots"
+                                                                            viewBox="0 0 16 16">
+                                                                            <path
+                                                                                d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                                                                        </svg>
+                                                                    </button>
+
+                                                                    <ul class="dropdown-menu"
+                                                                        aria-labelledby="dropdownMenuButton1">
+                                                                        <li>
+                                                                            <a class="btn edit-btn"
+                                                                                href="/nations/edit/<%= nation._id%>">Edit</a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a class="btn delete-btn"
+                                                                                onclick="deleteFunction('<%=nation._id%>')">Delete</a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </td>
+                                                        </td>
+                                                        <% } %>
                                                 </tr>
                                             </a>
                                             <%})%>
@@ -83,27 +89,29 @@
                                 </table>
                             </div>
                             <div class="col-lg-5">
-                                <form method="post" class="box">
-                                    <div class="mb-3">
-                                        <label class="label">Name</label>
-                                        <input type="text" class="form-control" name="name" placeholder="Name" value=""
-                                            required>
-                                        <p class="errMsg">
-                                            <%= message%>
-                                        </p>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Image</label>
-                                        <input class="form-control" type="text" name="image" placeholder="URL of image"
-                                            value="" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="label">Description</label>
-                                        <input class="form-control" type="text" name="description"
-                                            placeholder="Description" value="" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-success">Create</button>
-                                </form>
+                                <% if(checkAdmin){%>
+                                    <form method="post" class="box">
+                                        <div class="mb-3">
+                                            <label class="label">Name</label>
+                                            <input type="text" class="form-control" name="name" placeholder="Name"
+                                                value="" required>
+                                            <p class="errMsg">
+                                                <%= message%>
+                                            </p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Image</label>
+                                            <input class="form-control" type="text" name="image"
+                                                placeholder="URL of image" value="" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="label">Description</label>
+                                            <input class="form-control" type="text" name="description"
+                                                placeholder="Description" value="" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-success">Create</button>
+                                    </form>
+                                    <% } %>
                             </div>
                 </div>
             </div>
