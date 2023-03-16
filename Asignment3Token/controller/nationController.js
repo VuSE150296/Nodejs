@@ -3,6 +3,7 @@ const Nation = require("../models/nation");
 var jwt = require("jsonwebtoken");
 const config = require("../config/config");
 const Player = require("../models/player");
+const playerController = require("./playerController");
 
 const errMessage = "Nation already exist!";
 const authMessage = "Only Admin can do this action!";
@@ -24,19 +25,32 @@ class nationController {
             });
           })
           .catch(next);
+      } else {
+        Nation.find({})
+          .then((nation) => {
+            res.render("nation", {
+              title: "The list of Nations",
+              nation: nation,
+              checkAdmin: false,
+              message: "",
+              authMessage: "",
+            });
+          })
+          .catch(next);
       }
+    } else {
+      Nation.find({})
+        .then((nation) => {
+          res.render("nation", {
+            title: "The list of Nations",
+            nation: nation,
+            checkAdmin: false,
+            message: "",
+            authMessage: "",
+          });
+        })
+        .catch(next);
     }
-    Nation.find({})
-      .then((nation) => {
-        res.render("nation", {
-          title: "The list of Nations",
-          nation: nation,
-          checkAdmin: false,
-          message: "",
-          authMessage: "",
-        });
-      })
-      .catch(next);
   }
   create(req, res, next) {
     const nation = new Nation(req.body);
@@ -54,6 +68,7 @@ class nationController {
               title: "The list of Nations",
               nation: nation,
               message: errMessage,
+              checkAdmin: true,
             });
           });
         });
@@ -104,15 +119,37 @@ class nationController {
     }
   }
 
+  // delete(req, res, next) {
+  //   var data = jwt.verify(req.cookies.accessToken, config.secretKey);
+  //   if (data.user.isAdmin) {
+  //     const nationID = req.params.nationID;
+  //     Nation.findByIdAndDelete({ _id: nationID })
+  //       .then(() => {
+  //         res.redirect("/nations");
+  //       })
+  //       .catch(next);
+  //   } else {
+  //     req.flash("error_msg", authMessage);
+  //     res.redirect("/nations");
+  //   }
+  // }
+
   delete(req, res, next) {
     var data = jwt.verify(req.cookies.accessToken, config.secretKey);
     if (data.user.isAdmin) {
       const nationID = req.params.nationID;
-      Nation.findByIdAndDelete({ _id: nationID })
-        .then(() => {
-          res.redirect("/nations");
-        })
-        .catch(next);
+      Player.find({ nation: nationID }).then((player) => {
+        if (player) {
+          req.flash("error_msg", "Nation already use by player!");
+          res.redirect("/players");
+        } else {
+          Nation.findByIdAndDelete({ _id: nationID })
+            .then(() => {
+              res.redirect("/nations");
+            })
+            .catch(next);
+        }
+      });
     } else {
       req.flash("error_msg", authMessage);
       res.redirect("/nations");
