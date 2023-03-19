@@ -9,6 +9,8 @@ nationRouter
   .get(nationController.index)
   .post(cookieAuthenticated, nationController.create);
 
+nationRouter.route("/").get(nationController.liveSearch);
+
 nationRouter
   .route("/edit/:nationID")
   .get(cookieAuthenticated, nationController.edit)

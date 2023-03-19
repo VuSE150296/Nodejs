@@ -29,8 +29,8 @@ require("./config/passport")(passport);
 app.use(
   session({
     secret: "secret",
-    resave: true, //Mỗi req => tạo ra 1 session mới => không quan tâm ai hay browser nào hết
-    saveUninitialized: true, //Nếu không đụng hoặc chỉnh sửa thì mình không muốn session thay đổi
+    resave: true,
+    saveUninitialized: true,
   })
 );
 app.use(passport.initialize());

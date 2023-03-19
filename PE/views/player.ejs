@@ -5,15 +5,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Latest compiled and minified CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/stylesheets/player.css" type="text/css">
-    <title>
-        <%=title%>
-    </title>
+    <%- include('include/headerImport.ejs')%>
+        <link rel="stylesheet" href="/stylesheets/player.css" type="text/css">
+        <title>
+            <%=title%>
+        </title>
 </head>
 
 <body>
@@ -21,6 +17,102 @@
         <div class="bg-img overlay"
             style="background-image: url('https://themewagon.github.io/soccer/images/bg_3.jpg');">
             <div class="container">
+                <div class="content-header">
+                    <div class="content-header-search">
+                        <div class="search pt-4">
+                            <!-- <form action="/players" method="post"> -->
+                            <input type="text" placeholder="Search..." id="searchQuery" name="searchQuery"
+                                onkeyup="showResults(this.value)" onblur="onblurFunction()"
+                                onfocus="showResults(this.value)">
+                            <div id="searchResults" class="hide">This</div>
+                            <!-- </form> -->
+                        </div>
+                    </div>
+                    <div class="content-header-filter">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary" type="button" id="dropdownMenuClickableInside"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                aria-expanded="false">Nation</button>
+                            <ul class="dropdown-menu filter" aria-labelledby="dropdownMenuClickableInside">
+                                <!-- <form action="/players" method="post"> -->
+                                <% for(let nation of nations){ %>
+                                    <li><input class="form-check-input" type="checkbox" name="nation"
+                                            value="<%=nation._id%>" id="checkboxFilter">
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            <%=nation.name%>
+                                        </label>
+                                    </li>
+                                    <% } %>
+                                        <!-- </form> -->
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary" type="button" id="dropdownMenuClickableInside"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                aria-expanded="false">Club</button>
+                            <ul class="dropdown-menu filter" aria-labelledby="dropdownMenuClickableInside">
+                                <% for(let club of clubList){ %>
+                                    <li><input class="form-check-input" type="checkbox" name="club"
+                                            value="<%=club.name%>" id="checkboxNation">
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            <%=club.name%>
+                                        </label>
+                                    </li>
+                                    <% } %>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary" type="button" id="dropdownMenuClickableInside"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                aria-expanded="false">Position</button>
+                            <ul class="dropdown-menu filter" aria-labelledby="dropdownMenuClickableInside">
+                                <% for(let position of positions){ %>
+                                    <li><input class="form-check-input" type="checkbox" name="position"
+                                            value="<%=position.name%>" id="checkboxNation">
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            <%=position.name%>
+                                        </label>
+                                    </li>
+                                    <% } %>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary" type="button" id="dropdownMenuClickableInside"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                aria-expanded="false">Captain</button>
+                            <ul class="dropdown-menu filter" aria-labelledby="dropdownMenuClickableInside">
+                                <li><input class="form-check-input" type="checkbox" name="isCaptain" value="Captain"
+                                        id="checkboxNation">
+                                    <label class="form-check-label" for="flexCheckChecked">
+                                        Captain
+                                    </label>
+                                </li>
+                                <li><input class="form-check-input" type="checkbox" name="isCaptain" value="Not Captain"
+                                        id="checkboxNation">
+                                    <label class="form-check-label" for="flexCheckChecked">
+                                        Not Captain
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary" type="button" id="dropdownMenuClickableInside"
+                                data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                aria-expanded="false">Goals</button>
+                            <ul class="dropdown-menu filter" aria-labelledby="dropdownMenuClickableInside">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="formControlRange">Goals range</label>
+                                        <input type="range" class="form-control-range" id="formControlRange"
+                                            onInput="$('#rangeval').html($(this).val())" min="0" max="300">
+                                        <span id="rangeval">150</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <% if(success_msg!='' ){%>
                         <div class="alert alert-success alert-dismissible" role="alert">
@@ -37,7 +129,7 @@
                                             <%= error %>
                                         </div>
                                         <% } %>
-                                            <div class="col-lg-6">
+                                            <div id="tableItem" class="col-lg-6 table-wrapper-scroll-y scroll-table">
                                                 <table class="table">
                                                     <tbody>
                                                         <thead>
@@ -51,8 +143,8 @@
                                                         </thead>
                                                         <% players.forEach(function(player){%>
                                                             <tr>
-                                                                <th scope="row"><img class="rounded" src=<%=player.image
-                                                                        %>>
+                                                                <th scope="row"><img class="rounded"
+                                                                        src='<%=player.image%>' />
                                                                 </th>
                                                                 <td>
                                                                     <%= player.name %>
@@ -84,17 +176,17 @@
                                                                             </button>
                                                                             <ul class="dropdown-menu"
                                                                                 aria-labelledby="dropdownMenuButton1">
-                                                                                <li>
-                                                                                    <a class="btn detail-btn"
+                                                                                <li class="btn detail-btn">
+                                                                                    <a
                                                                                         href="/players/details/<%= player._id%>">Details</a>
                                                                                 </li>
                                                                                 <% if(checkAdmin){%>
-                                                                                    <li>
-                                                                                        <a class="btn edit-btn"
+                                                                                    <li class="btn edit-btn">
+                                                                                        <a
                                                                                             href="/players/edit/<%= player._id%>">Edit</a>
                                                                                     </li>
-                                                                                    <li>
-                                                                                        <a class="btn delete-btn"
+                                                                                    <li class="btn delete-btn">
+                                                                                        <a
                                                                                             onclick="deleteFunction('<%=player._id%>')">Delete
                                                                                         </a>
                                                                                     </li>
@@ -109,7 +201,8 @@
                                                 </table>
                                                 <% if(pages> 0) { %>
                                                     <nav class="mx-auto">
-                                                        <ul class="pagination" style="margin-top: 2rem; float:right">
+                                                        <ul id="pagination" class="pagination"
+                                                            style="margin-top: 2rem; float:right">
                                                             <% if(currentPage==1) { %>
                                                                 <li class="page-item disabled">
                                                                     <a class="page-link" href="/players/1">First</a>
@@ -258,5 +351,7 @@
         }
     }
 </script>
+<script src="/javascripts/search.js"></script>
+<script src="/javascripts/filter.js"></script>
 
 </html>

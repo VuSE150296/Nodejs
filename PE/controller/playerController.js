@@ -89,6 +89,7 @@ class playerController {
                 message: "",
                 checkAdmin: false,
                 positions: positionList,
+                nations: nationList,
                 currentPage: page,
                 pages: Math.ceil(count / perPage),
               });
@@ -110,6 +111,7 @@ class playerController {
               message: "",
               checkAdmin: false,
               positions: positionList,
+              nations: nationList,
               currentPage: page,
               pages: Math.ceil(count / perPage),
             });
@@ -256,6 +258,88 @@ class playerController {
         });
       })
       .catch(next);
+  }
+
+  async liveSearch(req, res, next) {
+    const searchQ = req.query.search;
+    try {
+      if (searchQ.length === 0) {
+        return res.send({ response: "" });
+      }
+
+      const results = await Player.find({
+        name: { $regex: searchQ, $options: "i" },
+      }).limit(5);
+      if (!results.length) {
+        return res.send({ response: "No result" });
+      }
+
+      const hint = results
+        .map(
+          (result) =>
+            `<div class='results'>` +
+            `<div class='result-img'><img src='${result.image}' alt="Player Image"/></div>` +
+            `<a href='/players/details/${result.id}'>${result.name}</a>` +
+            `</div>`
+        )
+        .join("<br/>");
+      res.send({ response: hint });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ response: "An error occurred" });
+    }
+  }
+  filter(req, res, next) {
+    const filterArray = req.body.filterArray;
+    let nationFilter = [];
+    let clubFilter = [];
+    let positionFilter = [];
+    let captainFilter = [];
+    for (let el of filterArray) {
+      switch (el.name) {
+        case "nation":
+          nationFilter.push(el.value);
+          break;
+        case "club":
+          clubFilter.push(el.value);
+          break;
+        case "position":
+          positionFilter.push(el.value);
+          break;
+        case "isCaptain":
+          captainFilter.push(el.value);
+          break;
+      }
+    }
+    let query = {};
+
+    if (nationFilter.length > 0) {
+      query.nation = { $in: nationFilter };
+    }
+
+    if (clubFilter.length > 0) {
+      query.club = { $in: clubFilter };
+    }
+
+    if (positionFilter.length > 0) {
+      query.position = { $in: positionFilter };
+    }
+
+    if (captainFilter.length > 0) {
+      query.isCaptain = { $in: captainFilter };
+    }
+
+    Player.find(query)
+      .populate("nation")
+      .then((players) => {
+        res.send({
+          players: players,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).send("Error fetching players");
+      });
   }
 }
 
